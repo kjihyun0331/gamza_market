@@ -1,0 +1,25 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<body style="height:93vh">
+    <table>
+        <thead>
+            <tr>
+                <th>userID</th>
+                <th>userPW</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {%for user in User%}
+                <tr>
+                    <td>{{user.userID}}</td>
+                    <td>{{user.userPW}}</td>
+                </tr>
+            {%endfor%}
+        </tbody>
+    </table>
+</body>
+
+{% endblock %}

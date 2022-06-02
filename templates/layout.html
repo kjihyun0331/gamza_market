@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>감자마켓</title>
+<style>
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+li {
+    float: left;
+}
+
+li a, .dropbtn {
+    display: inline-block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li.dropdown {
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    left:34vw;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {background-color: #f1f1f1}
+
+.show {display:block;}
+
+</style>
+</head>
+<body>
+
+<ul>
+    <li><a style="margin-left:10vw" class="active" href="/"><img style="height:3vh" alt="home" src="{{ url_for('static', filename="images/iconPotato.png")}}"></a></li>
+    <li><a style="margin-left:10vw" href="/Market"><img style="height:3vh" alt="market" src="{{ url_for('static', filename="images/market.png")}}"></a></li>
+    <li class="dropdown">
+        <a style="margin-left:10vw" href="javascript:void(0)" class="dropbtn" onclick="myFunction()"><img style="height:3vh" alt="my page" src="{{ url_for('static', filename="images/profile.png")}}"></a>
+            <div class="dropdown-content" id="myDropdown">
+                <a href="/Mypage">내 상점</a>
+                <a href="/Following">팔로잉</a>
+                <a href="/Login">로그인</a>
+            </div>
+    </li>
+    <li><input style="height:3vh;margin-top:2vh;margin-left:30vw;width:15vw" type="text" name="keyword"/></li>
+    <li><a href="/Market"><img alt="search" src="{{ url_for('static', filename="images/search.png")}}"></a></li>
+    <li><p style="color:white">{{session['username']}}</p></li>
+</ul>
+
+<main role="main">
+    {% block content %}{% endblock %}
+</main>
+
+<script>
+/* When the user clicks on the button, 
+toggle between hiding and showing the dropdown content */
+function myFunction() {
+    document.getElementById("myDropdown").classList.toggle("show");
+}
+
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(e) {
+  if (!e.target.matches('.dropbtn')) {
+
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    for (var d = 0; d < dropdowns.length; d++) {
+      var openDropdown = dropdowns[d];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<body style="height:93vh">
+
+    <form action="{{url_for('signup')}}" method="POST">
+        <div style="text-align:center">
+            <h1 style="margin-top:20vh">감자마켓 ID 생성</h1>
+            <input style="width:15vw;height:4vh;margin-top:10vh" type ="text" name="inputID" placeholder="ID"/></br>
+            <input style="width:15vw;height:4vh;margin-top:2vh" type="text" name="inputPW" placeholder="암호"/></br>
+            <input style="margin-top:8vh;background:dodgerblue;padding:10px 25px;border-radius:10px;border:none;color:white;cursor:pointer" type="submit" value="확인"/></br>
+        </div>
+    </form>
+</body>
+
+{% endblock %}
