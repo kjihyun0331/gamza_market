@@ -1,8 +1,34 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-<div>
-    <h1 style="margin:5vh 5vw">내 상점</h1>
+
+<body>
+
+    {% for product in products %}
+    상품 사진:
+    <img src="/static/files/{{ product.p_img }}" alt="product_img" width="200px" height="200px"/></br>
+    상품명:
+    {{ product.p_title }}</br>
+    가격:
+    {{ product.p_price }}₩</br>
+    키워드:
+    {{ product.p_keyword1 }}
+    {{ product.p_keyword2 }}
+    {{ product.p_keyword3 }}</br>
+    상품 설명:
+    {{ product.p_description }}</br>
+    
+</br>
+    판매 상태:
+    {{ product.p_state }}</br>
+    
+    <a href = "{{ url_for('update', product_title = product.title) }}">수정</a> 
+    <a href = "{{ url_for('deleteProduct', product_title = product.title) }}">삭제</a>
     <hr>
-</div>
+</br>
+    {% endfor %}
+    <a href = "{{ url_for('upload') }}">상품 더 올리기</a>
+    
+</body>
+
 {% endblock %}

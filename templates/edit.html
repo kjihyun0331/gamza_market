@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<body>
+    <form action = "{{ url_for('update', product_title = product.title) }}" method = 'POST'>
+        <h3>상품 정보</h3>
+        상품 이름</br>
+        <input type = "text" name = "p_title" value = {{product.p_title}}/></br>
+
+        가격</br>
+        <input type = "text" name = "p_price" value = {{product.p_price}}/>₩</br>
+
+        키워드</br>
+        <input type = "text" name = "p_keyword1" value = {{product.p_keyword1}} />
+        <input type = "text" name = "p_keyword2" value = {{product.p_keyword2}} />
+        <input type = "text" name = "p_keyword3" value = {{product.p_keyword3}} /></br>
+
+        상품 설명</br>
+        <input type = "text" name = "p_description" value = {{product.p_description}}/></br></br>
+
+        판매 상태</br>
+        <input type = "radio" name = "p_state" value = '판매중' />판매중
+        <input type = "radio" name = "p_state" value = '판매완료' />판매완료</br></br>
+    
+        <input type = "submit" value = "등록" />
+    </form>
+</body>
+
+{% endblock %}

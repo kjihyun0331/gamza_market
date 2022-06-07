@@ -1,11 +1,14 @@
 from flask import Flask,render_template,request,flash,redirect,url_for,session
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.utils import secure_filename
+import os
 
 app=Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///User.sqlite3'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY']="xinurocks"
+app.config['UPLOAD_FOLDER'] = 'static/files'
 
 db = SQLAlchemy(app)
 
@@ -28,7 +31,31 @@ class Following(db.Model):
         self.follower=follower
         self.followee=followee
         self.followeeID=id
-
+        
+class products(db.Model):
+    __tablename__ = 'products'
+    
+    title = db.Column(db.Integer, primary_key=True, unique = True, autoincrement=True)
+    p_title = db.Column(db.String(50))
+    p_price = db.Column(db.String(50))
+    p_keyword1 = db.Column(db.String(30))
+    p_keyword2 = db.Column(db.String(30), nullable=True)
+    p_keyword3 = db.Column(db.String(30), nullable=True)
+    p_description = db.Column(db.Text)
+    p_state = db.Column(db.String(20))
+    p_img = db.Column(db.String(50))
+    
+    def __init__(self, title, price, keyword1, description, state, img_file):
+        self.p_title = title
+        self.p_price = price
+        self.p_keyword1 = keyword1
+        self.p_description = description
+        self.p_state = state
+        self.p_img = img_file
+        self.p_keyword2 = ""
+        self.p_keyword3 = ""
+        
+        
 @app.route('/')
 def home():
     if 'username' in session:
@@ -56,13 +83,51 @@ def market():
 def mypage():
     if 'username' in session:
         username = session['username']
-        return render_template('mypage.html', username = username)
+        return render_template('mypage.html', username = username,products=products.query.all())
     else:
         return redirect(url_for('login'))
 
-@app.route('/Upload')
+@app.route('/Upload', methods=['GET', 'POST'])
 def upload():
+    if request.method == 'POST':
+        if not request.form['p_title'] or not request.form['p_price'] or not request.form['p_keyword1'] or not request.form['p_description'] or not request.form['p_state']:
+            flash('Please enter all the fields', 'error')
+        else:
+            f = request.files['file']
+            f.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename)))
+            
+            product = products(request.form['p_title'], request.form['p_price'], request.form['p_keyword1'], request.form['p_description'], request.form['p_state'], secure_filename(f.filename))
+            db.session.add(product)
+            db.session.commit()
+            
+            return redirect(url_for('mypage'))
     return render_template('upload.html')
+
+@app.route('/Update/<product_title>', methods = ['GET', 'POST'])
+def update(product_title):
+    update_product = products.query.filter_by(title = product_title).first()
+    if request.method == 'POST':
+        if not request.form['p_title'] or not request.form['p_price'] or not request.form['p_keyword1'] or not request.form['p_keyword2'] or not request.form['p_keyword3'] or not request.form['p_description'] or not request.form['p_state']:
+            flash('모든 상품 정보를 입력해주세요.', 'error')
+        else:
+            update_product.p_title = request.form['p_title']
+            update_product.p_price = request.form['p_price']
+            update_product.p_keyword1 = request.form['p_keyword1']
+            update_product.p_keyword2 = request.form['p_keyword2']
+            update_product.p_keyword3 = request.form['p_keyword3']
+            update_product.p_description = request.form['p_description']
+            update_product.p_state = request.form['p_state']
+            db.session.commit()
+            
+            return redirect(url_for('mypage'))
+    return render_template('edit.html', product = update_product)
+
+@app.route('/DeleteProduct/<product_title>')
+def deleteProduct(product_title):
+    product = products.query.filter_by(title = product_title).first()
+    db.session.delete(product)
+    db.session.commit()
+    return redirect(url_for('mypage'))
 
 @app.route('/Following')
 def following():

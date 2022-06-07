@@ -6,6 +6,7 @@
     <table>
         <thead>
             <tr>
+                <th>id</th>
                 <th>userID</th>
                 <th>userPW</th>
             </tr>
@@ -14,8 +15,30 @@
         <tbody>
             {%for user in User%}
                 <tr>
+                    <td>{{user.id}}</td>
                     <td>{{user.userID}}</td>
                     <td>{{user.userPW}}</td>
+                    <td><a href="{{url_for('delete',user_id=user.id)}}">delete</a></td>
+                </tr>
+            {%endfor%}
+        </tbody>
+    </table>
+
+    <table>
+        <thead>
+            <tr>
+                <th>follower</th>
+                <th>followee</th>
+                <th>followeeID</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {%for follow in Following%}
+                <tr>
+                    <td>{{follow.follower}}</td>
+                    <td>{{follow.followee}}</td>
+                    <td>{{follow.followeeID}}</td>
                 </tr>
             {%endfor%}
         </tbody>
