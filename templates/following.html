@@ -2,6 +2,20 @@
 
 {% block content %}
 <div>
-    <h1>팔로잉</h1>
+    <h1 style="margin:5vh 5vw">팔로우 중인 상점을 확인해보세요.</h1>
+    <hr>
+    <div style="display:flex;justify-content:center">
+        <table style="width:90vw;text-align:center">
+            <tbody>
+                {%for user in NowUser%}
+                    <tr>
+                        <td style="border-bottom: 1px solid #444444; padding: 5vh;font-size:20px">{{user.followee}}님의 상점</td>
+                        <td style="border-bottom: 1px solid #444444; padding: 5vh;"><a style="text-decoration-line:none;background:dodgerblue;border-radius:10px;border:none;color:white;padding:10px" href="/Shop/{{user.followeeID}}">상점 이동</a></td>
+                        <td style="border-bottom: 1px solid #444444; padding: 5vh;"><a style="text-decoration-line:none;background:lightgray;border-radius:10px;border:none;color:white;padding:10px" href="/Unfollow/{{user.followeeID}}">언팔로우</a></td>
+                    </tr>
+                {%endfor%}
+            </tbody>
+        </table>    
+    </div>
 </div>
 {% endblock %}

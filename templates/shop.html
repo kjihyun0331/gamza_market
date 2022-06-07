@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div>
+    <div style="display:flex;justify-content:center;align-items:center">
+        <h1 style="margin:5vh 5vw">{{user.userID}}님의 상점</h1>
+
+        {% if FoN %}
+            <button style="background:dodgerblue;border-radius:10px;border:none;color:white;cursor:pointer;height:40px;margin-left:60vw" type="button" onclick="location.href='/Follow/{{user.id}}'">팔로우</button>
+        {% else %}
+            <button style="background:dodgerblue;border-radius:10px;border:none;color:white;cursor:pointer;height:40px;margin-left:60vw" type="button" onclick="location.href='/Unfollow/{{user.id}}'">언팔로우</button>
+        {% endif %}
+
+    </div>
+    <hr>
+</div>
+{% endblock %}
