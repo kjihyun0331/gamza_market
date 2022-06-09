@@ -3,26 +3,59 @@
 
 <body>
     <form action = "{{ url_for('update', product_title = product.title) }}" method = 'POST'>
-        <h3>상품 정보</h3>
-        상품 이름</br>
-        <input type = "text" name = "p_title" value = {{product.p_title}}/></br>
+        
+        <div style="width: 100%; height: 100%;">
+            <div style="width:30%; height: 100%; margin-left:20%; float:left;">
+            </br>
+                <h3>상품 수정</h3>
+                <img src="/static/files/{{ product.p_img }}" alt="product_img" width="300px" height="300px"/></br>
+            </div>
+            <div style="width: 50%; height: 100%; float:right; margin-top:3%;">
+                </br></br>
+                <input style="width: 300px;
+                height: 32px;
+                font-size: 15px;
+                border: 0;
+                border-radius: 15px;
+                outline: none;
+                padding-left: 10px;
+                background-color: rgb(233, 233, 233);" type = "text" name = "p_title" value = {{product.p_title}} /></br></br>
 
-        가격</br>
-        <input type = "text" name = "p_price" value = {{product.p_price}}/>₩</br>
+                <input style="width: 300px;
+                height: 32px;
+                font-size: 15px;
+                border: 0;
+                border-radius: 15px;
+                outline: none;
+                padding-left: 10px;
+                background-color: rgb(233, 233, 233);" type = "text" name = "p_price" value = {{product.p_price}} /></br></br>
 
-        키워드</br>
-        <input type = "text" name = "p_keyword1" value = {{product.p_keyword1}} />
-        <input type = "text" name = "p_keyword2" value = {{product.p_keyword2}} />
-        <input type = "text" name = "p_keyword3" value = {{product.p_keyword3}} /></br>
+                <input style="width: 300px;
+                height: 32px;
+                font-size: 15px;
+                border: 0;
+                border-radius: 15px;
+                outline: none;
+                padding-left: 10px;
+                background-color: rgb(233, 233, 233);" type = "text" name = "p_keyword" value = {{product.p_keyword}} /></br></br>
 
-        상품 설명</br>
-        <input type = "text" name = "p_description" value = {{product.p_description}}/></br></br>
+                <input style="width: 300px;
+                height: 80px;
+                font-size: 15px;
+                border: 0;
+                border-radius: 15px;
+                outline: none;
+                padding-left: 10px;
+                background-color: rgb(233, 233, 233);" type = "text" name = "p_description" value = {{product.p_description}} /></br>
 
-        판매 상태</br>
-        <input type = "radio" name = "p_state" value = '판매중' />판매중
-        <input type = "radio" name = "p_state" value = '판매완료' />판매완료</br></br>
-    
-        <input type = "submit" value = "등록" />
+                </br>
+                <input type = "radio" name = "p_state" value = '판매중' checked/>판매중
+                <input type = "radio" name = "p_state" value = '판매완료' />판매완료</br></br>
+
+
+                <input style="width:70px; height:35px; background:#333; border-radius:10px; font-size: 12pt; color:white; border-color:#333; border-style:solid; border-width:2px;" type = "submit" value = "submit" />
+            </div>
+        </div>
     </form>
 </body>
 

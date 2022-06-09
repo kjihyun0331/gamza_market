@@ -1,5 +1,6 @@
 from flask import Flask,render_template,request,flash,redirect,url_for,session
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import null
 from werkzeug.utils import secure_filename
 import os
 
@@ -38,83 +39,85 @@ class products(db.Model):
     title = db.Column(db.Integer, primary_key=True, unique = True, autoincrement=True)
     p_title = db.Column(db.String(50))
     p_price = db.Column(db.String(50))
-    p_keyword1 = db.Column(db.String(30))
-    p_keyword2 = db.Column(db.String(30), nullable=True)
-    p_keyword3 = db.Column(db.String(30), nullable=True)
+    p_keyword = db.Column(db.Text)
     p_description = db.Column(db.Text)
     p_state = db.Column(db.String(20))
     p_img = db.Column(db.String(50))
+    p_user=db.Column(db.String(20))
+    p_userNum=db.Column(db.Integer)
     
-    def __init__(self, title, price, keyword1, description, state, img_file):
+    def __init__(self, title, price, keyword, description,state, img_file,user,num):
         self.p_title = title
         self.p_price = price
-        self.p_keyword1 = keyword1
+        self.p_keyword = keyword
         self.p_description = description
         self.p_state = state
         self.p_img = img_file
-        self.p_keyword2 = ""
-        self.p_keyword3 = ""
+        self.p_user=user
+        self.p_userNum=num
         
         
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def home():
-    if 'username' in session:
-        username = session['username']
-        return render_template('homeLogin.html', username = username)
+    if request.method == "POST":
+        return redirect(url_for('search', word=request.form['s_keyword']))
     else:
-        return render_template('home.html')
-    
-@app.route('/Test')
-def test():
-    return render_template('test.html',User=User.query.all(),Following=Following.query.all())
+        if 'username' in session:
+            username = session['username']
+            return render_template('homeLogin.html', username = username)
+        else:
+            return render_template('home.html')
 
-@app.route('/delete/<user_id>')
-def delete(user_id):
-    user=User.query.filter_by(id=user_id).first()
-    db.session.delete(user)
-    db.session.commit()
-    return render_template('test.html',User=User.query.all())
-
-@app.route('/Market')
+@app.route('/Market', methods=["GET", "POST"])
 def market():
-    return render_template('market.html')
-
-@app.route('/Mypage')
-def mypage():
-    if 'username' in session:
-        username = session['username']
-        return render_template('mypage.html', username = username,products=products.query.all())
+    if request.method == "POST":
+        return redirect(url_for('search', word=request.form['s_keyword']))
     else:
-        return redirect(url_for('login'))
+        return render_template('market.html',products=products.query.all())
 
+@app.route('/Mypage', methods=["GET", "POST"])
+def mypage():
+    if request.method == "POST":
+        return redirect(url_for('search', word=request.form['s_keyword']))
+    else:
+        if 'username' in session:
+            username = session['username']
+            return render_template('mypage.html', products=products.query.filter_by(p_user=session['username']).all(),username=username)
+        else:
+            return redirect(url_for('login'))
+    
 @app.route('/Upload', methods=['GET', 'POST'])
 def upload():
-    if request.method == 'POST':
-        if not request.form['p_title'] or not request.form['p_price'] or not request.form['p_keyword1'] or not request.form['p_description'] or not request.form['p_state']:
-            flash('Please enter all the fields', 'error')
-        else:
-            f = request.files['file']
-            f.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename)))
+    if 'username' in session:
+        username=session['username']
+        if request.method == 'POST':
+            if not request.form['p_title'] or not request.form['p_price'] or not request.form['p_keyword'] or not request.form['p_description']:
+                flash('모든 상품 정보를 입력해주세요.', 'error')
+            else:
+                f = request.files['file']
+                f.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename)))
+                
+                nowUser=User.query.filter_by(userID=session['username']).first()
+                product = products(request.form['p_title'], request.form['p_price'], request.form['p_keyword'], request.form['p_description'], '판매중',secure_filename(f.filename),session['username'],nowUser.id)
+                db.session.add(product)
+                db.session.commit()
             
-            product = products(request.form['p_title'], request.form['p_price'], request.form['p_keyword1'], request.form['p_description'], request.form['p_state'], secure_filename(f.filename))
-            db.session.add(product)
-            db.session.commit()
-            
-            return redirect(url_for('mypage'))
-    return render_template('upload.html')
+                return redirect(url_for('mypage'))
+        return render_template('upload.html',username=username)
+    else:
+        return redirect(url_for('login'))
+    
 
 @app.route('/Update/<product_title>', methods = ['GET', 'POST'])
 def update(product_title):
     update_product = products.query.filter_by(title = product_title).first()
     if request.method == 'POST':
-        if not request.form['p_title'] or not request.form['p_price'] or not request.form['p_keyword1'] or not request.form['p_keyword2'] or not request.form['p_keyword3'] or not request.form['p_description'] or not request.form['p_state']:
+        if not request.form['p_title'] or not request.form['p_price'] or not request.form['p_keyword'] or not request.form['p_description'] or not request.form['p_state']:
             flash('모든 상품 정보를 입력해주세요.', 'error')
         else:
             update_product.p_title = request.form['p_title']
             update_product.p_price = request.form['p_price']
-            update_product.p_keyword1 = request.form['p_keyword1']
-            update_product.p_keyword2 = request.form['p_keyword2']
-            update_product.p_keyword3 = request.form['p_keyword3']
+            update_product.p_keyword = request.form['p_keyword']
             update_product.p_description = request.form['p_description']
             update_product.p_state = request.form['p_state']
             db.session.commit()
@@ -129,13 +132,16 @@ def deleteProduct(product_title):
     db.session.commit()
     return redirect(url_for('mypage'))
 
-@app.route('/Following')
+@app.route('/Following', methods=['GET', 'POST'])
 def following():
-    if 'username' in session:
-        NowUser = Following.query.filter_by(follower=session['username']).all()
-        return render_template('following.html', NowUser = NowUser,User=User.query.all())
+    if request.method == "POST":
+        return redirect(url_for('search', word=request.form['s_keyword']))
     else:
-        return redirect(url_for('login'))
+        if 'username' in session:
+            NowUser = Following.query.filter_by(follower=session['username']).all()
+            return render_template('following.html', NowUser = NowUser,User=User.query.all())
+        else:
+            return redirect(url_for('login'))
 
 @app.route('/Login', methods=['GET', 'POST'])
 def login():
@@ -154,9 +160,12 @@ def login():
                 return render_template('login.html')
     return render_template('login.html')
 
-@app.route('/Signup_success')
+@app.route('/Signup_success', methods=['GET', 'POST'])
 def signup_success():
-    return render_template('signupSuccess.html')
+    if request.method == "POST":
+        return redirect(url_for('search', word=request.form['s_keyword']))
+    else:
+        return render_template('signupSuccess.html')
 
 @app.route('/Signup',methods=['GET','POST'])
 def signup():
@@ -181,15 +190,21 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('home'))
 
-@app.route('/Shop/<user_id>')
+@app.route('/Shop/<user_id>', methods=['GET', 'POST'])
 def shop(user_id):
-    Finduser=User.query.filter_by(id=user_id).first()
-    if 'username' in session:
-        nowUserFollowing=Following.query.filter_by(follower=session['username'],followee=Finduser.userID).first()
-        followOrNot=nowUserFollowing is None
-        return render_template('shop.html',FoN=followOrNot,user=Finduser)
+    if request.method == "POST":
+        return redirect(url_for('search', word=request.form['s_keyword']))
     else:
-        return render_template('shop.html',user=Finduser)
+        Finduser=User.query.filter_by(id=user_id).first()
+        if 'username' in session:
+            if Finduser.userID==session['username']:
+                return redirect(url_for('mypage'))
+            else:
+                nowUserFollowing=Following.query.filter_by(follower=session['username'],followee=Finduser.userID).first()
+                followOrNot=nowUserFollowing is None
+                return render_template('shop.html',FoN=followOrNot,user=Finduser,products=products.query.filter_by(p_user=Finduser.userID).all())
+        else:
+            return render_template('shop.html',user=Finduser)
 
 @app.route('/Follow/<user_id>')
 def follow(user_id):
@@ -209,6 +224,14 @@ def unfollow(user_id):
     db.session.delete(removingFollow)
     db.session.commit()
     return redirect(url_for('following'))
+
+@app.route('/Search/<word>', methods=["GET", "POST"])
+def search(word):
+    if request.method == "POST":
+        return redirect(url_for('search', word = request.form['s_keyword']))
+    else:
+        result = products.query.filter(products.p_keyword.like("%"+word+"%"))
+        return render_template('search.html', result=result)
     
 if __name__=='__main__':
     db.create_all()

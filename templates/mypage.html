@@ -3,32 +3,36 @@
 {% block content %}
 
 <body>
-
+    <h1 style="margin:5vh 5vw">내 상점</h1>
     {% for product in products %}
-    상품 사진:
-    <img src="/static/files/{{ product.p_img }}" alt="product_img" width="200px" height="200px"/></br>
-    상품명:
-    {{ product.p_title }}</br>
-    가격:
-    {{ product.p_price }}₩</br>
-    키워드:
-    {{ product.p_keyword1 }}
-    {{ product.p_keyword2 }}
-    {{ product.p_keyword3 }}</br>
-    상품 설명:
-    {{ product.p_description }}</br>
-    
+    <div style="width:100%; height:400px;">
+        <div style="width:30%; height:370px; float:left; margin-left:20%; margin-top:30px;">
+            <img src="/static/files/{{ product.p_img }}" alt="product_img" width="300px" height="300px"/></br>
+            ●{{ product.p_state }}</br></br>
+        </div>
+        <div style="width:50%; height:390px; float:right; margin-top:10px;">
+            <h2>{{ product.p_title }}</h2>
+            <p>#{{ product.p_keyword }}</p>
+            &nbsp;상품 설명
+            <div style="width: 400px; height: 30%; background-color: rgb(233, 233, 233); border-radius: 15px; ">
+                </br>&nbsp;&nbsp;
+                {{ product.p_description }}
+            </div>
+            <p>가격: {{ product.p_price }}₩</p>
+            
+            
+            <a href = "{{ url_for('update', product_title = product.title) }}">
+                <button style="width:60px; height:30px; background:white; border-radius:10px; font-size: 11pt; color:#333; border-color:#333; border-style:solid; border-width:2px;">수정</button>
+            </a>
+            <a href = "{{ url_for('deleteProduct', product_title = product.title) }}">
+                <button style="width:60px; height:30px; background:#333; border-radius:10px; font-size: 11pt; color:white; border-color:#333; border-style:solid; border-width:2px;">삭제</button>
+            </a>
+        </div>
+    </div>
+    <hr style="width: 80%;">
 </br>
-    판매 상태:
-    {{ product.p_state }}</br>
-    
-    <a href = "{{ url_for('update', product_title = product.title) }}">수정</a> 
-    <a href = "{{ url_for('deleteProduct', product_title = product.title) }}">삭제</a>
-    <hr>
-</br>
-    {% endfor %}
-    <a href = "{{ url_for('upload') }}">상품 더 올리기</a>
-    
+{% endfor %}
+<p style="text-align:center;"><a href = "{{ url_for('upload') }}"><button>상품 더 올리기</button></a></p>
 </body>
 
 {% endblock %}

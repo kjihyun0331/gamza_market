@@ -70,9 +70,12 @@ li.dropdown {
                 <a href="/Following">팔로잉</a>
             </div>
     </li>
-    <li><input style="height:3vh;margin-top:2vh;margin-left:30vw;width:15vw" type="text" name="keyword"/></li>
-    <li><a href="/Market"><img alt="search" src="{{ url_for('static', filename="images/search.png")}}"></a></li>
-    <li><p style="color:white">{{username}}</p></li>
+    <li>
+        <form method="POST">
+            <input style="width:160px; height:30px; margin-top: 15px;margin-right:5vw; margin-left:30vw; border-radius: 5px;" type = "search" name="s_keyword" placeholder="search">
+        </form>
+    </li>
+    <li><p style="color:white"> {{username}}</p></li>
 </ul>
 
 <main role="main">
