@@ -98,7 +98,10 @@ def upload():
                 f.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename)))
                 
                 nowUser=User.query.filter_by(userID=session['username']).first()
-                product = products(request.form['p_title'], request.form['p_price'], request.form['p_keyword'], request.form['p_description'], '판매중',secure_filename(f.filename),session['username'],nowUser.id)
+                
+                keyword = request.form['p_keyword'].replace(" ", "")
+                
+                product = products(request.form['p_title'], request.form['p_price'], keyword, request.form['p_description'], '판매중',secure_filename(f.filename),session['username'],nowUser.id)
                 db.session.add(product)
                 db.session.commit()
             
